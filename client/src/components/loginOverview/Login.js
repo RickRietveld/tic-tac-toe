@@ -26,25 +26,12 @@ export class Login extends React.Component {
     }
 
     render() {
-        return
-    <
-        div
-        className = "panel panel-default" >
-            < div
-        className = "panel-body" >
-            < InsertBox
-        onChange = {(e)
-    =>
-        this.handleOnChange(e)
-    }
-        name = {"Choose a name"}
-        />
-        < /div>
-        < ActionButton
-        onClick = {this.insertPlayerHandler}
-        name = {"Join tic-tac-toe"}
-        />
-        < /div>
+        return <div className="panel panel-default">
+            <div className="panel-body">
+                <InsertBox onChange={(e) => this.handleOnChange(e)} name={"Choose a name"}/>
+            </div>
+            <ActionButton onClick={this.insertPlayerHandler} name={"Join tic-tac-toe"}/>
+        </div>
     }
 }
 

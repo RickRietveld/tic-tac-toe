@@ -4,10 +4,7 @@ import * as ReactRedux from 'react-redux';
 export class Exit extends React.Component {
 
     render() {
-        return
-    <>
-        exit
-        < />
+        return <>exit</>
     }
 }
 

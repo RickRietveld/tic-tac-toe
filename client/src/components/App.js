@@ -1,4 +1,4 @@
-import {Component} from 'react';
+import React, {Component} from 'react';
 import * as ReactRedux from 'react-redux';
 import {Route, Switch} from 'react-router-dom'
 import {Router} from 'react-router';
@@ -51,67 +51,28 @@ class App extends Component {
 
     render() {
         return (
-            < Router
-        history = {history} >
-            < div
-        className = "App text-center mt-5 mb-5" >
-            < h1
-        id = "logo" > TicTacToe < /h1>
-            < /div>
-            < div
-        className = "App" >
+            <Router history={history}>
+                <div className="App text-center mt-5 mb-5">
+                    <h1 id="logo"> TicTacToe </h1>
+                </div>
+                <div className="App">
 
-            < div
-        className = "container"
-        style = {
-        {
-            marginTop: '200px'
-        }
-    }>
+                    <div className="container" style={{marginTop: '200px'}}>
 
-    <
-        Switch >
-        < Route
-        path = '/'
-        exact
-        render = {(routeProps)
-    => <
-        Login
-        routeProps = {routeProps}
-        onSubmitMessage = {messageString
-    =>
-        this.submitMessage(messageString)
-    }
-        />}/ >
-        < Route
-        path = '/board'
-        render = {(routeProps)
-    => <
-        Board
-        routeProps = {routeProps}
-        onSubmitMessage = {messageString
-    =>
-        this.submitMessage(messageString)
-    }
-        />}/ >
-        < Route
-        path = '/exit'
-        render = {(routeProps)
-    => <
-        Exit
-        routeProps = {routeProps}
-        onSubmitMessage = {messageString
-    =>
-        this.submitMessage(messageString)
-    }
-        />}/ >
-        < /Switch>
+                        <Switch>
+                            <Route path='/' exact render={(routeProps) => <Login routeProps={routeProps}
+                                                                                 onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
+                            <Route path='/board' render={(routeProps) => <Board routeProps={routeProps}
+                                                                                onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
+                            <Route path='/exit' render={(routeProps) => <Exit routeProps={routeProps}
+                                                                              onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
+                        </Switch>
 
-        < /div>
-        < /div>
-        < /Router>
-    )
-        ;
+                    </div>
+                </div>
+            </Router>
+        )
+            ;
     }
 }
 

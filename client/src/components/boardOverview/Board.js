@@ -6,10 +6,9 @@ export class Board extends React.Component {
 
 
     render() {
-        return
-    <>
-        hello
-        < />
+        return <>
+            Hello
+        </>
     }
 }
 
