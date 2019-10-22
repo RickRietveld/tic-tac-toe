@@ -121,6 +121,7 @@ export function updateBoardActionHandler(board, gameId) {
             throw new Error(`HTTP POST request went wrong: got "${response.statusText}" for "${url}"`)
         }
         dispatch(updateBoardHandler(board));
+
     }
 }
 
@@ -136,7 +137,9 @@ export function fetchBoardUpdate() {
 }
 
 export function updateBoardHandler(board) {
-    console.log('hiero');
+    console.log('hiero I have update myself I think nugget');
+    console.log('nigger 1 ' + board)
+    console.log(JSON.stringify('nigger 2 ' + board));
     return {type: "updateBoardHandler", board}
 }
 
@@ -148,9 +151,9 @@ const initialBoardState = {
 function boardReducer(state = initialBoardState, action) {
     switch (action.type) {
 
-        case 'board':
+        case 'updateBoardHandler':
             state.board = action.board;
-            return {...state, updateBoardHandler: action.board};
+            return {...state};
 
         default:
             return state;

@@ -41,10 +41,7 @@ export class Game extends Component {
                 {
                     this.state.isPlaying && //currentTurn = true
                     <GameMechanics
-                        gameChannel={this.gameChannel}
-                        piece={this.state.piece}
-                        isRoomCreator={this.state.isRoomCreator}
-                        myTurn={this.state.myTurn}
+                        onSubmitMessage={this.props.onSubmitMessage}
                     />
                 }
             </div>

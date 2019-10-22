@@ -15,6 +15,7 @@ class GameMechanics extends React.Component {
     }
 
     onMakeMoveHandler = async () => {
+        console.log('send it bitch.')
         await this.props.onSubmitMessage(JSON.stringify({message: 'MOVE_SET_BY_PLAYER'}));
     };
 
@@ -66,6 +67,7 @@ class GameMechanics extends React.Component {
     // }
 
     onMakeMove = async (index, gameTag) => {
+        this.onMakeMoveHandler();
         console.log("GameTag: " + gameTag);
         console.log("index: " + index);
         const squares = this.state.squares;
@@ -104,7 +106,7 @@ class GameMechanics extends React.Component {
                 <div className="board">
                     <Board
                         squares={this.state.squares}
-                        onClick={index => this.onMakeMove(index, this.state.gameTag, this.onMakeMoveHandler)}
+                        onClick={index => this.onMakeMove(index, this.state.gameTag)}
                     />
                 </div>
             </div>
