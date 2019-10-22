@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App';
-//import './style/main.css';
+import './styling/css/style.css';
 import {mainReducer} from './reducers/reducers';
 import * as Redux from 'redux';
 import * as ReactRedux from 'react-redux';

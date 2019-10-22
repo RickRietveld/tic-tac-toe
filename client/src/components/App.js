@@ -3,11 +3,13 @@ import * as ReactRedux from 'react-redux';
 import {Route, Switch} from 'react-router-dom'
 import {Router} from 'react-router';
 import '../App.css';
-import Login from "./loginOverview/Login";
+import Login from "./menuOverview/Menu";
 import Board from "./boardOverview/Board";
 import Exit from "./exitOverview/Exit";
-
 import {createBrowserHistory} from 'history';
+import JoinGame from "./joinOverview/JoinGame";
+import {fetchPlayerList} from "../reducers/reducers";
+import CreateGame from "./createOverview/CreateGame";
 
 export const history = createBrowserHistory();
 
@@ -37,7 +39,8 @@ class App extends Component {
             // eslint-disable-next-line default-case
             switch (obj.message) {
                 case 'USER_REGISTERED':
-                    return history.push('/board');
+                    await this.props.fetchPlayerList();
+                    break;
                 case 'GAME_ENDED':
                     return history.push('/exit');
             }
@@ -52,24 +55,18 @@ class App extends Component {
     render() {
         return (
             <Router history={history}>
-                <div className="App text-center mt-5 mb-5">
-                    <h1 id="logo"> TicTacToe </h1>
-                </div>
-                <div className="App">
-
-                    <div className="container" style={{marginTop: '200px'}}>
-
                         <Switch>
                             <Route path='/' exact render={(routeProps) => <Login routeProps={routeProps}
                                                                                  onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
+                            <Route path='/create' exact render={(routeProps) => <CreateGame routeProps={routeProps}
+                                                                                            onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
+                            <Route path='/join' render={(routeProps) => <JoinGame routeProps={routeProps}
+                                                                                  onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
                             <Route path='/board' render={(routeProps) => <Board routeProps={routeProps}
                                                                                 onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
                             <Route path='/exit' render={(routeProps) => <Exit routeProps={routeProps}
                                                                               onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
                         </Switch>
-
-                    </div>
-                </div>
             </Router>
         )
             ;
@@ -77,11 +74,15 @@ class App extends Component {
 }
 
 function mapStateToProps(state) {
-    return {}
+    return {
+        players: state.players
+    }
 }
 
 function mapDispatchToProps(dispatch) {
-    return {}
+    return {
+        fetchPlayerList: () => dispatch(fetchPlayerList()),
+    }
 }
 
 export default ReactRedux.connect(mapStateToProps, mapDispatchToProps)(App);
