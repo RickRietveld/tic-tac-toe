@@ -1,7 +1,7 @@
 import * as Redux from 'redux';
 
 
-export function createGameActionHandler(playerName, playerId, gameId) {
+export function createGameActionHandler(playerName, playerId, gameTag, gameId) {
     return async (dispatch) => {
         const url = `http://localhost:3000/tictactoe/createGame`;
         fetch(url, {
@@ -13,15 +13,15 @@ export function createGameActionHandler(playerName, playerId, gameId) {
                 playerName: playerName,
                 playerId: playerId,
                 gameId: gameId,
-                gameTag: "X",
+                gameTag: gameTag,
                 currentTurn: true
             })
         }).catch(() => console.log("error"));
-        dispatch(insertPlayerAction(playerName, playerId, false));
+        dispatch(insertPlayerAction(playerName, playerId, gameTag, false, gameId));
     }
 }
 
-export function insertPlayerActionHandler(playerName, playerId, gameId) {
+export function insertPlayerActionHandler(playerName, playerId, gameTag, gameId) {
 
     return async dispatch => {
         const url = `http://localhost:3000/tictactoe/joinMatch/${gameId}`;
@@ -33,14 +33,14 @@ export function insertPlayerActionHandler(playerName, playerId, gameId) {
             body: JSON.stringify({
                 playerId: playerId,
                 playerName: playerName,
-                gameTag: "O",
+                gameTag: gameTag,
                 currentTurn: false
             })
         });
         if (response.error) {
             throw new Error(`HTTP POST request went wrong: got "${response.statusText}" for "${url}"`)
         }
-        dispatch(insertPlayerAction(playerName, playerId, false));
+        dispatch(insertPlayerAction(playerName, playerId, gameTag, false, gameId));
         dispatch(fetchPlayerList())
     }
 }
@@ -51,7 +51,6 @@ export function fetchPlayerList() {
         await fetch(`http://localhost:3000/tictactoe/playerList`).then((response) => {
             return response.json();
         }).then((data) => {
-            console.log("HOIOIOIOIO" + JSON.stringify(data));
             dispatch(playerList(data));
         });
     }
@@ -66,17 +65,19 @@ export function playerList(playerList) {
     return {type: "playerList", playerList}
 }
 
-export function insertPlayerAction(playerName, playerId, currentTurn) {
-    return {type: "insertPlayerAction", playerName, playerId, currentTurn}
+export function insertPlayerAction(playerName, playerId, gameTag, currentTurn, gameId) {
+    return {type: "insertPlayerAction", playerName, playerId, gameTag, currentTurn, gameId}
 }
 
 const initialPlayerListState = {
-    player: [{
+    player: {
         playerName: undefined,
         playerId: undefined,
+        gameTag: undefined,
         currentTurn: undefined
-    }],
+    },
     playerList: [],
+    gameId: undefined,
 };
 
 function loginReducer(state = initialPlayerListState, action) {
@@ -86,9 +87,11 @@ function loginReducer(state = initialPlayerListState, action) {
             return {...state, playerList: action.playerList};
 
         case 'insertPlayerAction':
-            state.player[0].playerName = action.playerName;
-            state.player[0].playerId = action.playerId;
-            state.player[0].currentTurn = action.currentTurn;
+            state.player.playerName = action.playerName;
+            state.player.playerId = action.playerId;
+            state.player.gameTag = action.gameTag;
+            state.player.currentTurn = action.currentTurn;
+            state.gameId = action.gameId;
             return {...state};
 
         default:
@@ -100,17 +103,54 @@ function loginReducer(state = initialPlayerListState, action) {
 //    State management for boardOverview
 //---------------------------------------------------------------------
 
+export function updateBoardActionHandler(board, gameId) {
+
+    return (dispatch) => {
+        const url = `http://localhost:3000/tictactoe/updateBoard/${gameId}`;
+        console.log('i am in hier')
+        const response = fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                board: board,
+            })
+        });
+        if (response.error) {
+            throw new Error(`HTTP POST request went wrong: got "${response.statusText}" for "${url}"`)
+        }
+        dispatch(updateBoardHandler(board));
+    }
+}
+
+export function fetchBoardUpdate() {
+
+    return async (dispatch) => {
+        await fetch(`http://localhost:3000/tictactoe/fetchBoard`).then((response) => {
+            return response.json();
+        }).then((data) => {
+            dispatch(updateBoardHandler(data));
+        });
+    }
+}
+
+export function updateBoardHandler(board) {
+    console.log('hiero');
+    return {type: "updateBoardHandler", board}
+}
+
 const initialBoardState = {
-    board: [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-    ]
+    board: []
 };
 
 
 function boardReducer(state = initialBoardState, action) {
     switch (action.type) {
+
+        case 'board':
+            state.board = action.board;
+            return {...state, updateBoardHandler: action.board};
 
         default:
             return state;

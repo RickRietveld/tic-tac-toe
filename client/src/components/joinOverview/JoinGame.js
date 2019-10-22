@@ -15,7 +15,7 @@ export class JoinGame extends React.Component {
     }
 
     insertPlayerHandler = async () => {
-        await this.props.insertPlayerAction(this.state.playerName, generateRandomId(), this.state.gameId);
+        await this.props.insertPlayerAction(this.state.playerName, generateRandomId(), "O", this.state.gameId);
         await this.props.onSubmitMessage(JSON.stringify({message: 'USER_REGISTERED'}));
         await this.props.routeProps.history.push('/board');
     };
@@ -55,7 +55,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        insertPlayerAction: (playerName, playerId, gameId) => dispatch(insertPlayerActionHandler(playerName, playerId, gameId)),
+        insertPlayerAction: (playerName, playerId, gameTag, gameId) => dispatch(insertPlayerActionHandler(playerName, playerId, gameTag, gameId)),
     }
 }
 

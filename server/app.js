@@ -73,12 +73,12 @@ tictactoe.post('/createGame', async function (req, res) {
     // });
 });
 
-tictactoe.get('/playerList', async function (request, response) {
-    await gameCollection.find({"players.playerName": {$ne: null}}).toArray(function (err, result) {
-        if (err) throw err;
-        response.json(result);
-    });
-});
+// tictactoe.get('/playerList', async function (request, response) {
+//     await gameCollection.find({"players.playerName": {$ne: null}}).toArray(function (err, result) {
+//         if (err) throw err;
+//         response.json(result);
+//     });
+// });
 
 tictactoe.put('/joinMatch/:gameId', function (req, res) {
     Game.findOneAndUpdate({"gameId": req.params.gameId}, {
@@ -91,11 +91,30 @@ tictactoe.put('/joinMatch/:gameId', function (req, res) {
             }]
         }
     }, (err, data) => {
-        console.log('went here');
         if (err) {
             return res.status(500).send(err);
         }
         return res.status(200).json(data);
+    });
+});
+
+tictactoe.put('/updateBoard/:gameId', function (req, res) {
+    Game.findOneAndUpdate({"gameId": req.params.gameId}, {
+        "$set": {
+            gameProgress: req.body.board
+        }
+    }, (err, data) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        return res.status(200).json(data);
+    });
+});
+
+tictactoe.get('/fetchBoard', async function (request, response) {
+    await gameCollection.find({"gameProgress": {$ne: null}}).toArray(function (err, result) {
+        if (err) throw err;
+        response.json(result);
     });
 });
 

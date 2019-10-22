@@ -4,12 +4,12 @@ import {Route, Switch} from 'react-router-dom'
 import {Router} from 'react-router';
 import '../App.css';
 import Login from "./menuOverview/Menu";
-import Board from "./boardOverview/Board";
 import Exit from "./exitOverview/Exit";
 import {createBrowserHistory} from 'history';
 import JoinGame from "./joinOverview/JoinGame";
-import {fetchPlayerList} from "../reducers/reducers";
+import {fetchBoardUpdate, fetchPlayerList} from "../reducers/reducers";
 import CreateGame from "./createOverview/CreateGame";
+import Game from "./boardOverview/Game";
 
 export const history = createBrowserHistory();
 
@@ -41,6 +41,9 @@ class App extends Component {
                 case 'USER_REGISTERED':
                     await this.props.fetchPlayerList();
                     break;
+                case 'MOVE_SET_BY_PLAYER':
+                    await this.props.fetchBoardUpdate();
+                    break;
                 case 'GAME_ENDED':
                     return history.push('/exit');
             }
@@ -62,8 +65,8 @@ class App extends Component {
                                                                                             onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
                             <Route path='/join' render={(routeProps) => <JoinGame routeProps={routeProps}
                                                                                   onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
-                            <Route path='/board' render={(routeProps) => <Board routeProps={routeProps}
-                                                                                onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
+                            <Route path='/board' render={(routeProps) => <Game routeProps={routeProps}
+                                                                               onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
                             <Route path='/exit' render={(routeProps) => <Exit routeProps={routeProps}
                                                                               onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
                         </Switch>
@@ -82,6 +85,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         fetchPlayerList: () => dispatch(fetchPlayerList()),
+        fetchBoardUpdate: () => dispatch(fetchBoardUpdate()),
     }
 }
 

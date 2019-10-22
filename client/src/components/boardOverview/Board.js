@@ -1,43 +1,59 @@
 import React from 'react';
 import * as ReactRedux from 'react-redux';
-import {ListGroup} from "react-bootstrap";
-import ListGroupItem from "./boardLogic/ListGroupItem.js"
+import Square from "./boardLogic/Square";
 
 
 export class Board extends React.Component {
 
-    render() {
+    // Create the 3 x 3 board
+    createBoard(row, col) {
+        const board = [];
+        let cellCounter = 0;
 
-        const playersOverviewList = this.props.players.playerList;
-
-        let loggedInPlayers;
-
-        if (playersOverviewList) {
-            loggedInPlayers = playersOverviewList
-                .map((player, index) =>
-                    <ListGroupItem key={index} token={player.currentTurn} name={player.playerName}/>
-                );
-
+        for (let i = 0; i < row; i += 1) {
+            const columns = [];
+            for (let j = 0; j < col; j += 1) {
+                columns.push(this.renderSquare(cellCounter++));
+            }
+            board.push(<div key={i} className="board-row">{columns}</div>);
         }
 
+        return board;
+    }
+
+    renderSquare(i) {
+        console.log("render square called");
+        return (
+            <Square
+                key={i}
+                value={this.props.squares[i]}
+                onClick={() => this.props.onClick(i)}
+            />
+        );
+    }
+
+    render() {
+
+        // const playersOverviewList = this.props.players.playerList;
+        //
+        // let loggedInPlayers;
+        //
+        // if (playersOverviewList) {
+        //     loggedInPlayers = playersOverviewList
+        //         .map((player, index) =>
+        //             <ListGroupItem key={index} token={player.currentTurn} name={player.playerName}/>
+        //         )
+        //
+        // }
+
         return <>
-            <div className="containerPlayers">
-                <ListGroup>
-                    {loggedInPlayers}
-                </ListGroup>
-            </div>
-            {/*<div id={"container"}>*/}
-            {/*    <h1> TicTacToe </h1>*/}
-            {/*    <div className={"q"} id={"q0"}></div>*/}
-            {/*    <div className={"q"} id={"q1"}></div>*/}
-            {/*    <div className={"q"} id={"q2"}></div>*/}
-            {/*    <div className={"q"} id={"q3"}></div>*/}
-            {/*    <div className={"q"} id={"q4"}></div>*/}
-            {/*    <div className={"q"} id={"q5"}></div>*/}
-            {/*    <div className={"q"} id={"q6"}></div>*/}
-            {/*    <div className={"q"} id={"q7"}></div>*/}
-            {/*    <div className={"q"} id={"q8"}></div>*/}
+            {/*<div className="containerPlayers">*/}
+            {/*    <ListGroup>*/}
+            {/*        {loggedInPlayers}*/}
+            {/*    </ListGroup>*/}
             {/*</div>*/}
+            <div>{this.createBoard(3, 3)}</div>
+            ;
         </>
     }
 }

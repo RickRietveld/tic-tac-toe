@@ -14,7 +14,7 @@ export class CreateGame extends React.Component {
     }
 
     createGameHandlerHandler = async () => {
-        await this.props.createGameAction(this.state.playerName, generateRandomId(), generateRandomId());
+        await this.props.createGameAction(this.state.playerName, generateRandomId(), "X", generateRandomId());
         await this.props.onSubmitMessage(JSON.stringify({message: 'USER_REGISTERED'}));
         await this.props.routeProps.history.push('/board');
     };
@@ -47,7 +47,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        createGameAction: (playerName, playerId, gameId) => dispatch(createGameActionHandler(playerName, playerId, gameId)),
+        createGameAction: (playerName, playerId, gameTag, gameId) => dispatch(createGameActionHandler(playerName, playerId, gameTag, gameId)),
     }
 }
 
