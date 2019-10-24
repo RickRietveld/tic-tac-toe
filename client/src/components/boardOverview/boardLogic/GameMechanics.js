@@ -1,26 +1,51 @@
 import React from 'react';
 import Board from '../Board';
 import * as ReactRedux from "react-redux";
-import {updateBoardActionHandler} from "../../../reducers/reducers";
+import {
+    insertWinnerActionHandler,
+    opponentTurnActionHandler,
+    updateBoardActionHandler
+} from "../../../reducers/reducers";
+
+import Pusher from 'pusher-js';
+
+var pusher = new Pusher('PUSHER_APP_KEY', {
+    cluster: 'PUSHER_CLUSTER',
+    forceTLS: true
+});
 
 class GameMechanics extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
-            squares: Array(9).fill(''), // 3x3 board
+            squares: this.props.board.board,
             gameTag: this.props.players.player.gameTag
+
+            //Array(9).fill(''), // 3x3 board
         };
 
         this.counter = 0;
     }
 
     onMakeMoveHandler = async () => {
-        console.log('send it bitch.')
         await this.props.onSubmitMessage(JSON.stringify({message: 'MOVE_SET_BY_PLAYER'}));
     };
 
+    onAnnounceWinnerHandler = async () => {
+        await this.props.onSubmitMessage(JSON.stringify({message: 'ANNOUNCE_WINNER'}));
+    }
 
-    checkForWinner = (squares) => {
+    onAnnounceDrawHandler = async () => {
+        await this.props.onSubmitMessage(JSON.stringify({message: 'ANNOUNCE_DRAW'}));
+    }
+
+    onOpponentTurnHandler = async () => {
+        await this.props.onSubmitMessage(JSON.stringify({message: 'OPPONENT_TURN'})); //display overlay
+    }
+
+
+    checkForWinner = async (squares) => {
         // Possible winning combinations
         const possibleCombinations = [
             [0, 1, 2],
@@ -37,8 +62,8 @@ class GameMechanics extends React.Component {
         for (let i = 0; i < possibleCombinations.length; i += 1) {
             const [a, b, c] = possibleCombinations[i];
             if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-                //this.announceWinner(squares[a]);
-                console.log('neger');
+                this.props.insertWinnerAction(squares[a]);
+                this.onAnnounceWinnerHandler();
                 return;
             }
         }
@@ -47,59 +72,37 @@ class GameMechanics extends React.Component {
         this.counter++;
         // The board is filled up and there is no winner
         if (this.counter === 9) {
-            this.gameOver = true;
-            //this.newRound(null);
+            this.onAnnounceDrawHandler();
         }
     };
 
-    // // Opponent's move is published to the board
-    // publishMove = (index, piece) => {
-    //     const squares = this.state.squares;
-    //
-    //     squares[index] = piece;
-    //     this.turn = (squares[index] === 'X')? 'O' : 'X';
-    //
-    //     this.setState({
-    //         squares: squares,
-    //     });
-    //
-    //     this.checkForWinner(squares)
-    // }
+    updateState = async () => {
+        this.setState({
+            squares: this.props.board.board.gameProgress,
+        });
+        await this.props.opponentTurnAction();
+    };
 
     onMakeMove = async (index, gameTag) => {
-        this.onMakeMoveHandler();
-        console.log("GameTag: " + gameTag);
-        console.log("index: " + index);
+
         const squares = this.state.squares;
 
         // Check if the square is empty
         if (!squares[index]) {
             squares[index] = gameTag;
 
-            this.setState({
-                squares: squares,
-            });
+            await this.props.updateBoardAction(index, this.state.gameTag, this.props.players.gameId, squares);
+            await this.props.opponentTurnAction();
+
+            setTimeout(this.onMakeMoveHandler, 500);
 
             this.checkForWinner(squares);
-
-
-            console.log(this.state.squares);
-            console.log(this.props.players.gameId);
-
-            await this.props.updateBoardAction(this.state.squares, this.props.players.gameId);
-
-            console.log('this should not be reached');
-
-            // // Other player's turn to make a move
-            // this.turn = (this.turn === 'X') ? 'O' : 'X';
-
-            // Check if there is a winner
-            this.checkForWinner(squares)
+        } else {
+            console.log('taken already')
         }
     };
 
     render() {
-        let status;
 
         return (
             <div className="game">
@@ -108,6 +111,7 @@ class GameMechanics extends React.Component {
                         squares={this.state.squares}
                         onClick={index => this.onMakeMove(index, this.state.gameTag)}
                     />
+                    <button onClick={this.updateState}/>
                 </div>
             </div>
         );
@@ -117,12 +121,15 @@ class GameMechanics extends React.Component {
 function mapStateToProps(state) {
     return {
         players: state.players,
+        board: state.mainBoard,
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        updateBoardAction: (board, gameId) => dispatch(updateBoardActionHandler(board, gameId)),
+        updateBoardAction: (index, gameTag, board, gameId) => dispatch(updateBoardActionHandler(index, gameTag, board, gameId)),
+        insertWinnerAction: (winnerTag) => dispatch(insertWinnerActionHandler(winnerTag)),
+        opponentTurnAction: () => dispatch(opponentTurnActionHandler()),
     }
 }
 

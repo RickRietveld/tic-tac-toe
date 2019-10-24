@@ -10,6 +10,17 @@ const theHttpServer = http.createServer();
 const fs = require('fs');
 eval(fs.readFileSync('websockets.js') + '');
 
+
+var Pusher = require('pusher');
+
+var pusher = new Pusher({
+    appId: 'PUSHER_APP_ID',
+    key: 'PUSHER_APP_KEY',
+    secret: 'PUSHER_APP_SECRET',
+    cluster: 'PUSHER_CLUSTER',
+    encrypted: true
+});
+
 //---------- Mongoose -------------//
 
 mongoose.connect('mongodb://localhost:27017/tictactoe', {useNewUrlParser: true});
@@ -60,7 +71,7 @@ tictactoe.post('/createGame', async function (req, res) {
             currentTurn: req.body.currentTurn
         }],
         gameId: req.body.gameId,
-        gameProgress: []
+        gameProgress: ['', '', '', '', '', '', '', '', '']
     });
 
     await createGame.save(function (err) {
@@ -99,9 +110,12 @@ tictactoe.put('/joinMatch/:gameId', function (req, res) {
 });
 
 tictactoe.put('/updateBoard/:gameId', function (req, res) {
+
+    const query = 'gameProgress.' + req.body.index;
+
     Game.findOneAndUpdate({"gameId": req.params.gameId}, {
-        "$set": {
-            gameProgress: req.body.board
+        $set: {
+            [query]: req.body.gameTag
         }
     }, (err, data) => {
         if (err) {
@@ -111,11 +125,19 @@ tictactoe.put('/updateBoard/:gameId', function (req, res) {
     });
 });
 
-tictactoe.get('/fetchBoard', async function (request, response) {
-    await gameCollection.find({"gameProgress": {$ne: null}}).toArray(function (err, result) {
+// tictactoe.get('/fetchBoard', async function (request, response) {
+//     await gameCollection.find({"gameProgress": {$ne: null}}).toArray(function (err, result) {
+//         if (err) throw err;
+//         response.json(result);
+//     });
+// });
+
+tictactoe.get('/fetchBoard/:gameId', async function (request, response) {
+    await Game.findOne({"gameId": request.params.gameId}, 'gameProgress', (function (err, data) {
+
         if (err) throw err;
-        response.json(result);
-    });
+        response.json(data);
+    }));
 });
 
 tictactoe.get('/playerList', async function (request, response) {

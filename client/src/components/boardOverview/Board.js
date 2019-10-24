@@ -22,7 +22,6 @@ export class Board extends React.Component {
     }
 
     renderSquare(i) {
-        console.log("render square called");
         return (
             <Square
                 key={i}
@@ -53,7 +52,6 @@ export class Board extends React.Component {
             {/*    </ListGroup>*/}
             {/*</div>*/}
             <div>{this.createBoard(3, 3)}</div>
-            ;
         </>
     }
 }

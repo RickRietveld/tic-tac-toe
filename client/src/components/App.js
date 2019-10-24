@@ -42,7 +42,7 @@ class App extends Component {
                     await this.props.fetchPlayerList();
                     break;
                 case 'MOVE_SET_BY_PLAYER':
-                    await this.props.fetchBoardUpdate();
+                    await this.props.fetchBoardUpdate(this.props.players.gameId);
                     break;
                 case 'GAME_ENDED':
                     return history.push('/exit');
@@ -85,7 +85,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         fetchPlayerList: () => dispatch(fetchPlayerList()),
-        fetchBoardUpdate: () => dispatch(fetchBoardUpdate()),
+        fetchBoardUpdate: (gameId) => dispatch(fetchBoardUpdate(gameId)),
     }
 }
 

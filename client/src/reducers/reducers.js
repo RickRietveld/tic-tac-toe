@@ -17,7 +17,7 @@ export function createGameActionHandler(playerName, playerId, gameTag, gameId) {
                 currentTurn: true
             })
         }).catch(() => console.log("error"));
-        dispatch(insertPlayerAction(playerName, playerId, gameTag, false, gameId));
+        dispatch(insertPlayerAction(playerName, playerId, gameTag, true, gameId));
     }
 }
 
@@ -41,7 +41,7 @@ export function insertPlayerActionHandler(playerName, playerId, gameTag, gameId)
             throw new Error(`HTTP POST request went wrong: got "${response.statusText}" for "${url}"`)
         }
         dispatch(insertPlayerAction(playerName, playerId, gameTag, false, gameId));
-        dispatch(fetchPlayerList())
+        dispatch(fetchPlayerList(gameId))
     }
 }
 
@@ -69,6 +69,10 @@ export function insertPlayerAction(playerName, playerId, gameTag, currentTurn, g
     return {type: "insertPlayerAction", playerName, playerId, gameTag, currentTurn, gameId}
 }
 
+export function opponentTurnActionHandler() {
+    return {type: "opponentTurnActionHandler"}
+}
+
 const initialPlayerListState = {
     player: {
         playerName: undefined,
@@ -94,6 +98,11 @@ function loginReducer(state = initialPlayerListState, action) {
             state.gameId = action.gameId;
             return {...state};
 
+        case 'opponentTurnActionHandler':
+            console.log('switch turneeeenenenenenenenneen')
+            state.player.currentTurn = !state.player.currentTurn;
+            return {...state};
+
         default:
             return state;
     }
@@ -103,11 +112,11 @@ function loginReducer(state = initialPlayerListState, action) {
 //    State management for boardOverview
 //---------------------------------------------------------------------
 
-export function updateBoardActionHandler(board, gameId) {
+export function updateBoardActionHandler(index, gameTag, gameId, board) {
+    console.log('updateBoardActionHandler ' + gameTag);
 
     return (dispatch) => {
         const url = `http://localhost:3000/tictactoe/updateBoard/${gameId}`;
-        console.log('i am in hier')
         const response = fetch(url, {
             method: 'PUT',
             headers: {
@@ -115,6 +124,8 @@ export function updateBoardActionHandler(board, gameId) {
             },
             body: JSON.stringify({
                 board: board,
+                index: index,
+                gameTag: gameTag,
             })
         });
         if (response.error) {
@@ -125,26 +136,29 @@ export function updateBoardActionHandler(board, gameId) {
     }
 }
 
-export function fetchBoardUpdate() {
-
+export function fetchBoardUpdate(gameId) {
+    console.log('debug here')
     return async (dispatch) => {
-        await fetch(`http://localhost:3000/tictactoe/fetchBoard`).then((response) => {
+        await fetch(`http://localhost:3000/tictactoe/fetchBoard/${gameId}`).then((response) => {
             return response.json();
         }).then((data) => {
             dispatch(updateBoardHandler(data));
+            console.log('debug here ' + JSON.stringify(data))
         });
     }
 }
 
 export function updateBoardHandler(board) {
-    console.log('hiero I have update myself I think nugget');
-    console.log('nigger 1 ' + board)
-    console.log(JSON.stringify('nigger 2 ' + board));
     return {type: "updateBoardHandler", board}
 }
 
+export function insertWinnerActionHandler(winnerTag) {
+    return {type: "insertWinnerActionHandler", winnerTag}
+}
+
 const initialBoardState = {
-    board: []
+    board: ['', '', '', '', '', '', '', '', ''],
+    winner: undefined,
 };
 
 
@@ -153,6 +167,11 @@ function boardReducer(state = initialBoardState, action) {
 
         case 'updateBoardHandler':
             state.board = action.board;
+            console.log('what is your state... ? ' + JSON.stringify(state.board));
+            return {...state};
+
+        case 'insertWinnerActionHandler':
+            state.winner = action.winnerTag;
             return {...state};
 
         default:
