@@ -7,7 +7,7 @@ import Login from "./menuOverview/Menu";
 import Exit from "./exitOverview/Exit";
 import {createBrowserHistory} from 'history';
 import JoinGame from "./joinOverview/JoinGame";
-import {fetchBoardUpdate, fetchPlayerList} from "../reducers/reducers";
+import {fetchBoardUpdate} from "../reducers/reducers";
 import CreateGame from "./createOverview/CreateGame";
 import Game from "./boardOverview/Game";
 
@@ -23,12 +23,10 @@ class App extends Component {
         this.ws.send(messageString)
     };
 
-    async componentDidMount() {
-
+    componentDidMount() {
         this.ws.onopen = () => {
             console.log('connected');
             clientCount++;
-            console.log(clientCount)
         };
 
 
@@ -37,10 +35,9 @@ class App extends Component {
             let obj = JSON.parse(evt.data);
             let gameId = this.props.players.gameId;
 
-            // eslint-disable-next-line default-case
             switch (obj.message) {
                 case 'USER_REGISTERED':
-                    await this.props.fetchPlayerList(gameId);
+                    //await this.props.fetchPlayerList(gameId);
                     break;
                 case 'MOVE_SET_BY_PLAYER':
                     await this.props.fetchBoardUpdate(gameId);
@@ -51,7 +48,6 @@ class App extends Component {
                     return history.push('/exit');
             }
         };
-
 
         this.ws.onclose = () => {
             console.log('disconnected');
@@ -86,7 +82,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        fetchPlayerList: (gameId) => dispatch(fetchPlayerList(gameId)),
+        //fetchPlayerList: (gameId) => dispatch(fetchPlayerList(gameId)),
         fetchBoardUpdate: (gameId) => dispatch(fetchBoardUpdate(gameId)),
     }
 }

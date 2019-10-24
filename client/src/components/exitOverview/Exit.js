@@ -6,7 +6,6 @@ import ActionButton from "../_componentTools/ActionButton";
 export class Exit extends React.Component {
 
     componentDidMount() {
-        // this.props.fetchBoard(this.props.players.gameId);
         this.props.fetchWinner(this.props.players.gameId);
     }
 
@@ -16,7 +15,7 @@ export class Exit extends React.Component {
 
     displayText = () => {
         if (this.props.board.winner) {
-            return <h2>{this.props.board.winner} has won the game!</h2>
+            return <h2>Player '{this.props.board.winner}' has won the game!</h2>
         } else {
             return <h2>Game has ended in a draw!</h2>
         }
@@ -24,10 +23,12 @@ export class Exit extends React.Component {
 
 
     render() {
-        return <div className="containerForm">
-            {this.displayText()}
-            <ActionButton onClick={this.insertPlayerHandler} name={"Go back to main menu"}/>
-        </div>
+        return <>
+            <h1 className="title">{this.displayText()}</h1>
+            <div className="containerForm">
+                <ActionButton onClick={this.insertPlayerHandler} name={"Go back to main menu"}/>
+            </div>
+        </>
     }
 }
 

@@ -31,24 +31,7 @@ export class Board extends React.Component {
 
     render() {
 
-        const playersOverviewList = this.props.players.playerList;
-        console.log("DEBUG : " + JSON.stringify(this.props.players.playerList));
-        // let loggedInPlayers;
-        //
-        // if (playersOverviewList) {
-        //      loggedInPlayers = playersOverviewList
-        //         .map((player, index) =>
-        //             <ListGroupItem key={index} token={player.gameTag} name={player.playerName}/>
-        //         )
-        //
-        // }
-
         return <>
-            {/*<div className="containerPlayers">*/}
-            {/*    <ListGroup>*/}
-            {/*        {loggedInPlayers}*/}
-            {/*    </ListGroup>*/}
-            {/*</div>*/}
             <div>{this.createBoard(3, 3)}</div>
         </>
     }

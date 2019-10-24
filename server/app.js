@@ -115,6 +115,7 @@ tictactoe.put('/joinMatch/:gameId', function (req, res) {
     });
 });
 
+
 tictactoe.put('/updateBoard/:gameId', function (req, res) {
 
     const query = 'gameProgress.' + req.body.index;
@@ -164,14 +165,15 @@ tictactoe.get('/fetchTurnCounter/:gameId', async function (req, res) {
         }));
 });
 
-
-tictactoe.get('/playerList/:gameId', async function (req, res) {
+tictactoe.get('/gameChecker/:roomId', async function (req, res) {
     const gameId = req.params.gameId;
-    await Game.find({"gameId": gameId},
-        'players', (function (err, data) {
-            if (err) throw err;
+    await Game.findOne({"gameId": gameId}, (function (err, data) {
+        if (data == null) {
+            return res.status(500).send(err);
+        } else {
             res.json(data);
-        }));
+        }
+    }));
 });
 
 

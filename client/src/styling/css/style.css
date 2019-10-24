@@ -80,7 +80,9 @@ p {
 
 .board {
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 150px;
     width: 16.5em;
 }
 
@@ -91,9 +93,21 @@ p {
     margin-left: auto;
     justify-content: center;
     align-items: center;
-    font-size: 2rem;
-    color: rgb(208, 33, 41);
+    font-size: 4rem;
+    color: lightskyblue;
 }
+
+.gameNumber {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+    margin-left: auto;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    color: black;
+}
+
 
 .button-container {
     margin-left: 1em;

@@ -1,5 +1,5 @@
 import React from 'react';
-import Board from './boardLogic/Board';
+import Board from './boardComponents/Board';
 import * as ReactRedux from "react-redux";
 import {fetchTurnCounter, insertWinnerActionHandler, updateBoardActionHandler} from "../../reducers/reducers";
 
@@ -27,11 +27,11 @@ class Game extends React.Component {
 
     onAnnounceWinnerHandler = async () => {
         await this.props.onSubmitMessage(JSON.stringify({message: 'ANNOUNCE_WINNER'}));
-    }
+    };
 
     onAnnounceDrawHandler = async () => {
         await this.props.onSubmitMessage(JSON.stringify({message: 'ANNOUNCE_DRAW'}));
-    }
+    };
 
     componentDidMount() {
         const gameId = this.props.players.gameId;
@@ -52,29 +52,6 @@ class Game extends React.Component {
         });
     };
 
-
-    // takeTurns =  () => {
-    //     this.props.opponentTurnAction();
-    //
-    //     this.setState({
-    //         currentTurn: !this.state.currentTurn,
-    //     });
-    //
-    //     console.log('NR2: ' + this.props.players.player.currentTurn)
-    // };
-    //
-    // checkForTurn = () => {
-    //     let myElement = document.querySelector("#pointer");
-    //
-    //     if(this.state.currentTurn) {
-    //         myElement.style.pointerEvents = "auto";
-    //     } else {
-    //         myElement.style.pointerEvents = "none";
-    //     }
-    //
-    // };
-
-
     checkForWinner = async (squares) => {
         // Possible winning combinations
         const possibleCombinations = [
@@ -93,21 +70,19 @@ class Game extends React.Component {
             const [a, b, c] = possibleCombinations[i];
             if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
                 await this.props.insertWinnerAction(this.props.players.gameId, squares[a]);
-                setTimeout(this.onAnnounceWinnerHandler, 1000);
+                this.onAnnounceWinnerHandler();
                 return;
             }
         }
         // Check if the game ends in a draw
         // The board is filled up and there is no winner
         if (this.props.board.turnCount === 9) {
-            setTimeout(this.onAnnounceDrawHandler, 1000);
+            this.onAnnounceDrawHandler();
         }
     };
 
     onMakeMove = async (index, gameTag) => {
         const squares = this.state.squares;
-        // this.takeTurns();
-        // this.checkForTurn();
 
         // Check if the square is empty
         if (!squares[index]) {
@@ -125,11 +100,8 @@ class Game extends React.Component {
 
     render() {
         return (<>
-                <div className="title">
-                    <p>Tic Tac Toe</p>
-                    <p>{this.props.players.gameId}</p>
-                </div>
-                <div id="pointer">
+                <h1 className="title">Tic Tac Toe</h1>
+                <h1 className="gameNumber">Game number: {this.props.players.gameId}</h1>
                     <div className="game">
                         <div className="board">
                             <Board
@@ -138,7 +110,6 @@ class Game extends React.Component {
                             />
                         </div>
                     </div>
-                </div>
             </>
         );
     }

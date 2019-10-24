@@ -1,6 +1,5 @@
 import * as Redux from 'redux';
 
-
 export function createGameActionHandler(playerName, playerId, gameTag, gameId) {
     return async (dispatch) => {
         const url = `http://localhost:3000/tictactoe/createGame`;
@@ -41,31 +40,12 @@ export function insertPlayerActionHandler(playerName, playerId, gameTag, gameId)
             throw new Error(`HTTP POST request went wrong: got "${response.statusText}" for "${url}"`)
         }
         dispatch(insertPlayerAction(playerName, playerId, gameTag, true, gameId));
-        dispatch(fetchPlayerList(gameId))
-    }
-}
-
-export function fetchPlayerList(gameId) {
-    console.log("**********************************");
-    console.log("DATA PLAYERS : " + gameId);
-    return async (dispatch) => {
-        await fetch(`http://localhost:3000/tictactoe/playerList/${gameId}`).then((response) => {
-            return response.json();
-        }).then((data) => {
-            dispatch(playerList(data));
-            console.log("DATA PLAYERS : " + JSON.stringify(data));
-        });
     }
 }
 
 //=====================================================================
-//    State management for loginOverview
+//    State management for players
 //---------------------------------------------------------------------
-
-// Action Creators:
-export function playerList(playerList) {
-    return {type: "playerList", playerList}
-}
 
 export function insertPlayerAction(playerName, playerId, gameTag, currentTurn, gameId) {
     return {type: "insertPlayerAction", playerName, playerId, gameTag, currentTurn, gameId}
@@ -82,15 +62,12 @@ const initialPlayerListState = {
         gameTag: undefined,
         currentTurn: undefined
     },
-    playerList: [],
+    //playerList: [],
     gameId: undefined,
 };
 
 function loginReducer(state = initialPlayerListState, action) {
     switch (action.type) {
-
-        case 'playerList':
-            return {...state, playerList: action.playerList};
 
         case 'insertPlayerAction':
             state.player.playerName = action.playerName;
@@ -110,7 +87,7 @@ function loginReducer(state = initialPlayerListState, action) {
 }
 
 //=====================================================================
-//    State management for boardOverview
+//    State management for board
 //---------------------------------------------------------------------
 
 export function updateBoardActionHandler(index, gameTag, gameId, board) {
@@ -143,7 +120,6 @@ export function fetchBoardUpdate(gameId) {
         });
     }
 }
-
 
 export function insertWinnerActionHandler(gameId, gameTag) {
     return () => {
@@ -207,7 +183,6 @@ function boardReducer(state = initialBoardState, action) {
 
         case 'updateBoardHandler':
             state.board = action.board;
-            console.log('what is your state... ? ' + JSON.stringify(state.board));
             return {...state};
 
         case 'insertWinnerAction':
