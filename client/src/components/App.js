@@ -35,16 +35,19 @@ class App extends Component {
         this.ws.onmessage = async (evt) => {
 
             let obj = JSON.parse(evt.data);
+            let gameId = this.props.players.gameId;
 
             // eslint-disable-next-line default-case
             switch (obj.message) {
                 case 'USER_REGISTERED':
-                    await this.props.fetchPlayerList();
+                    await this.props.fetchPlayerList(gameId);
                     break;
                 case 'MOVE_SET_BY_PLAYER':
-                    await this.props.fetchBoardUpdate(this.props.players.gameId);
+                    await this.props.fetchBoardUpdate(gameId);
                     break;
-                case 'GAME_ENDED':
+                case 'ANNOUNCE_WINNER':
+                    return history.push('/exit');
+                case 'ANNOUNCE_DRAW':
                     return history.push('/exit');
             }
         };
@@ -65,14 +68,13 @@ class App extends Component {
                                                                                             onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
                             <Route path='/join' render={(routeProps) => <JoinGame routeProps={routeProps}
                                                                                   onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
-                            <Route path='/board' render={(routeProps) => <Game routeProps={routeProps}
-                                                                               onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
+                            <Route path='/game' render={(routeProps) => <Game routeProps={routeProps}
+                                                                              onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
                             <Route path='/exit' render={(routeProps) => <Exit routeProps={routeProps}
                                                                               onSubmitMessage={messageString => this.submitMessage(messageString)}/>}/>
                         </Switch>
             </Router>
-        )
-            ;
+        );
     }
 }
 
@@ -84,7 +86,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        fetchPlayerList: () => dispatch(fetchPlayerList()),
+        fetchPlayerList: (gameId) => dispatch(fetchPlayerList(gameId)),
         fetchBoardUpdate: (gameId) => dispatch(fetchBoardUpdate(gameId)),
     }
 }

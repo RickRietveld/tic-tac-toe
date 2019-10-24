@@ -1,11 +1,9 @@
 import React from 'react';
 import * as ReactRedux from 'react-redux';
-import Square from "./boardLogic/Square";
-
+import Square from "./Square";
 
 export class Board extends React.Component {
 
-    // Create the 3 x 3 board
     createBoard(row, col) {
         const board = [];
         let cellCounter = 0;
@@ -33,14 +31,14 @@ export class Board extends React.Component {
 
     render() {
 
-        // const playersOverviewList = this.props.players.playerList;
-        //
+        const playersOverviewList = this.props.players.playerList;
+        console.log("DEBUG : " + JSON.stringify(this.props.players.playerList));
         // let loggedInPlayers;
         //
         // if (playersOverviewList) {
-        //     loggedInPlayers = playersOverviewList
+        //      loggedInPlayers = playersOverviewList
         //         .map((player, index) =>
-        //             <ListGroupItem key={index} token={player.currentTurn} name={player.playerName}/>
+        //             <ListGroupItem key={index} token={player.gameTag} name={player.playerName}/>
         //         )
         //
         // }

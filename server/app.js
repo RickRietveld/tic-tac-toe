@@ -11,13 +11,13 @@ const fs = require('fs');
 eval(fs.readFileSync('websockets.js') + '');
 
 
-var Pusher = require('pusher');
+let Pusher = require('pusher');
 
-var pusher = new Pusher({
-    appId: 'PUSHER_APP_ID',
-    key: 'PUSHER_APP_KEY',
-    secret: 'PUSHER_APP_SECRET',
-    cluster: 'PUSHER_CLUSTER',
+let pusher = new Pusher({
+    appId: '886596',
+    key: '8787ac6d77c8d767b723',
+    secret: '955e111ab85f7f9e2d00',
+    cluster: 'eu',
     encrypted: true
 });
 
@@ -54,7 +54,9 @@ let gameSchema = new Schema({
         gameTag: String,
         currentTurn: Boolean
     }],
-    gameProgress: []
+    gameProgress: [],
+    winner: String,
+    turnCounter: Number,
 });
 
 let Game = mongoose.model('Game', gameSchema);
@@ -71,25 +73,29 @@ tictactoe.post('/createGame', async function (req, res) {
             currentTurn: req.body.currentTurn
         }],
         gameId: req.body.gameId,
-        gameProgress: ['', '', '', '', '', '', '', '', '']
+        gameProgress: ['', '', '', '', '', '', '', '', ''],
+        turnCounter: 0
     });
 
     await createGame.save(function (err) {
         if (err) return res.status(500).send(err);
     });
 
-    // await gameCollection.find({"games.currentTurn": {$ne: null}}).toArray(function (err, result) {
-    //     if (err) throw err;
-    //     res.json(result);
-    // });
 });
 
-// tictactoe.get('/playerList', async function (request, response) {
-//     await gameCollection.find({"players.playerName": {$ne: null}}).toArray(function (err, result) {
-//         if (err) throw err;
-//         response.json(result);
-//     });
-// });
+tictactoe.put('/setWinner/:gameId', function (req, res) {
+
+    Game.findOneAndUpdate({"gameId": req.params.gameId}, {
+        $set: {
+            "winner": req.body.winner
+        }
+    }, (err, data) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        return res.status(200).json(data);
+    });
+});
 
 tictactoe.put('/joinMatch/:gameId', function (req, res) {
     Game.findOneAndUpdate({"gameId": req.params.gameId}, {
@@ -116,6 +122,9 @@ tictactoe.put('/updateBoard/:gameId', function (req, res) {
     Game.findOneAndUpdate({"gameId": req.params.gameId}, {
         $set: {
             [query]: req.body.gameTag
+        },
+        $inc: {
+            "turnCounter": 1
         }
     }, (err, data) => {
         if (err) {
@@ -125,27 +134,46 @@ tictactoe.put('/updateBoard/:gameId', function (req, res) {
     });
 });
 
-// tictactoe.get('/fetchBoard', async function (request, response) {
-//     await gameCollection.find({"gameProgress": {$ne: null}}).toArray(function (err, result) {
-//         if (err) throw err;
-//         response.json(result);
-//     });
-// });
 
-tictactoe.get('/fetchBoard/:gameId', async function (request, response) {
-    await Game.findOne({"gameId": request.params.gameId}, 'gameProgress', (function (err, data) {
+tictactoe.get('/fetchBoard/:gameId', async function (req, res) {
+    const gameId = req.params.gameId;
+    await Game.findOne({"gameId": gameId},
+        'gameProgress', (function (err, data) {
 
         if (err) throw err;
-        response.json(data);
+            res.json(data);
+            pusher.trigger('game-' + gameId, 'board-updated', {});
     }));
 });
 
-tictactoe.get('/playerList', async function (request, response) {
-    await gameCollection.find({"players.playerId": {$ne: null}}).toArray(function (err, result) {
-        if (err) throw err;
-        response.json(result);
-    });
+tictactoe.get('/fetchWinner/:gameId', async function (req, res) {
+    const gameId = req.params.gameId;
+    await Game.findOne({"gameId": gameId},
+        'winner', (function (err, data) {
+            if (err) throw err;
+            res.json(data);
+        }));
 });
+
+tictactoe.get('/fetchTurnCounter/:gameId', async function (req, res) {
+    const gameId = req.params.gameId;
+    await Game.findOne({"gameId": gameId},
+        'turnCounter', (function (err, data) {
+            if (err) throw err;
+            res.json(data);
+        }));
+});
+
+
+tictactoe.get('/playerList/:gameId', async function (req, res) {
+    const gameId = req.params.gameId;
+    await Game.find({"gameId": gameId},
+        'players', (function (err, data) {
+            if (err) throw err;
+            res.json(data);
+        }));
+});
+
 
 theHttpServer.on('request', app);
 theHttpServer.listen(3000,

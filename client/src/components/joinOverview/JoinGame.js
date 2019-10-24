@@ -17,7 +17,7 @@ export class JoinGame extends React.Component {
     insertPlayerHandler = async () => {
         await this.props.insertPlayerAction(this.state.playerName, generateRandomId(), "O", this.state.gameId);
         await this.props.onSubmitMessage(JSON.stringify({message: 'USER_REGISTERED'}));
-        await this.props.routeProps.history.push('/board');
+        await this.props.routeProps.history.push('/game');
     };
 
     handleOnNameChange(e) {

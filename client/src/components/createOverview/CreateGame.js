@@ -16,7 +16,7 @@ export class CreateGame extends React.Component {
     createGameHandlerHandler = async () => {
         await this.props.createGameAction(this.state.playerName, generateRandomId(), "X", generateRandomId());
         await this.props.onSubmitMessage(JSON.stringify({message: 'USER_REGISTERED'}));
-        await this.props.routeProps.history.push('/board');
+        await this.props.routeProps.history.push('/game');
     };
 
     handleOnChange(e) {
