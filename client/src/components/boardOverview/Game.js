@@ -71,14 +71,14 @@ class Game extends React.Component {
             const [a, b, c] = possibleCombinations[i];
             if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
                 await this.props.insertWinnerAction(this.props.players.gameId, squares[a]);
-                this.onAnnounceWinnerHandler();
+                setTimeout(this.onAnnounceWinnerHandler, 500);
                 return;
             }
         }
         // Check if the game ends in a draw
         // The board is filled up and there is no winner
         if (this.props.board.turnCount === maxNr) {
-            this.onAnnounceDrawHandler();
+            setTimeout(this.onAnnounceDrawHandler, 100);
         }
     };
 
@@ -100,14 +100,14 @@ class Game extends React.Component {
         return (<>
                 <h1 className="title">Tic Tac Toe</h1>
                 <h1 className="gameNumber">Game number: {this.props.players.gameId}</h1>
-                    <div className="game">
-                        <div className="board">
-                            <Board
-                                squares={this.state.squares}
-                                onClick={index => this.onMakeMove(index, this.state.gameTag)}
-                            />
-                        </div>
+                <div className="game">
+                    <div className="board">
+                        <Board
+                            squares={this.state.squares}
+                            onClick={index => this.onMakeMove(index, this.state.gameTag)}
+                        />
                     </div>
+                </div>
             </>
         );
     }

@@ -140,6 +140,7 @@ export function insertWinnerActionHandler(gameId, gameTag) {
 }
 
 export function fetchWinner(gameId) {
+    console.log('FETCHING WINNER');
     return async (dispatch) => {
         await fetch(`http://localhost:3000/tictactoe/fetchWinner/${gameId}`).then((response) => {
             return response.json();

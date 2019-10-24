@@ -80,8 +80,8 @@ tictactoe.post('/createGame', async function (req, res) {
     await createGame.save(function (err) {
         if (err) return res.status(500).send(err);
     });
-
 });
+
 
 tictactoe.put('/setWinner/:gameId', function (req, res) {
 
@@ -140,11 +140,10 @@ tictactoe.get('/fetchBoard/:gameId', async function (req, res) {
     const gameId = req.params.gameId;
     await Game.findOne({"gameId": gameId},
         'gameProgress', (function (err, data) {
-
-        if (err) throw err;
+            if (err) throw err;
             res.json(data);
             pusher.trigger('game-' + gameId, 'board-updated', {});
-    }));
+        }));
 });
 
 tictactoe.get('/fetchWinner/:gameId', async function (req, res) {

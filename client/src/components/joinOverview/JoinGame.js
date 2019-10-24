@@ -32,7 +32,6 @@ export class JoinGame extends React.Component {
         })
     }
 
-
     render() {
         return <div className="containerForm">
             <InsertBox onChange={(e) => this.handleOnNameChange(e)} value={"Choose a name"}/>
