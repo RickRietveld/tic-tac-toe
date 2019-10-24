@@ -53,6 +53,7 @@ class Game extends React.Component {
     };
 
     checkForWinner = async (squares) => {
+        let maxNr = 9;
         // Possible winning combinations
         const possibleCombinations = [
             [0, 1, 2],
@@ -76,7 +77,7 @@ class Game extends React.Component {
         }
         // Check if the game ends in a draw
         // The board is filled up and there is no winner
-        if (this.props.board.turnCount === 9) {
+        if (this.props.board.turnCount === maxNr) {
             this.onAnnounceDrawHandler();
         }
     };
@@ -92,9 +93,6 @@ class Game extends React.Component {
             await this.props.fetchTurnCount(this.props.players.gameId);
             await this.onMakeMoveHandler();
             this.checkForWinner(squares);
-
-        } else {
-            console.log('taken already')
         }
     };
 
@@ -127,7 +125,6 @@ function mapDispatchToProps(dispatch) {
         updateBoardAction: (index, gameTag, board, gameId) => dispatch(updateBoardActionHandler(index, gameTag, board, gameId)),
         insertWinnerAction: (gameId, winnerTag) => dispatch(insertWinnerActionHandler(gameId, winnerTag)),
         fetchTurnCount: (gameId) => dispatch(fetchTurnCounter(gameId)),
-        //opponentTurnAction: () => dispatch(opponentTurnActionHandler()),
     }
 }
 
