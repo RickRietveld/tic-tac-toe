@@ -14,7 +14,6 @@ import Game from "./boardOverview/Game";
 export const history = createBrowserHistory();
 
 const URL = 'ws://localhost:3000';
-let clientCount = 0;
 
 class App extends Component {
 
@@ -26,9 +25,7 @@ class App extends Component {
     componentDidMount() {
         this.ws.onopen = () => {
             console.log('connected');
-            clientCount++;
         };
-
 
         this.ws.onmessage = async (evt) => {
 

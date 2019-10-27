@@ -45,7 +45,6 @@ export function generateRandomId() {
     return Math.floor(100000 + Math.random() * 900000);
 }
 
-
 function mapStateToProps(state) {
     return {
         players: state.players,

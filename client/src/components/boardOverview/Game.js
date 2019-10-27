@@ -70,7 +70,7 @@ class Game extends React.Component {
         for (let i = 0; i < possibleCombinations.length; i += 1) {
             const [a, b, c] = possibleCombinations[i];
             if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-                await this.props.insertWinnerAction(this.props.players.gameId, squares[a]);
+                await this.props.insertWinnerAction(this.props.players.gameId, squares[a], this.props.players.player.playerName);
                 setTimeout(this.onAnnounceWinnerHandler, 500);
                 return;
             }
@@ -123,7 +123,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         updateBoardAction: (index, gameTag, board, gameId) => dispatch(updateBoardActionHandler(index, gameTag, board, gameId)),
-        insertWinnerAction: (gameId, winnerTag) => dispatch(insertWinnerActionHandler(gameId, winnerTag)),
+        insertWinnerAction: (gameId, winnerTag, playerName) => dispatch(insertWinnerActionHandler(gameId, winnerTag, playerName)),
         fetchTurnCount: (gameId) => dispatch(fetchTurnCounter(gameId)),
     }
 }

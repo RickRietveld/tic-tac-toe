@@ -15,12 +15,11 @@ export class Exit extends React.Component {
 
     displayText = () => {
         if (this.props.board.winner) {
-            return <h2>Player '{this.props.board.winner}' has won the game!</h2>
+            return <h2>{this.props.board.winner} has won the game!</h2>
         } else {
             return <h2>Game has ended in a draw!</h2>
         }
     };
-
 
     render() {
         return <>

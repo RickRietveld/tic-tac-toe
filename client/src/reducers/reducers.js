@@ -1,5 +1,9 @@
 import * as Redux from 'redux';
 
+//=====================================================================
+//    State management for players
+//---------------------------------------------------------------------
+
 export function createGameActionHandler(playerName, playerId, gameTag, gameId) {
     return async (dispatch) => {
         const url = `http://localhost:3000/tictactoe/createGame`;
@@ -42,10 +46,6 @@ export function insertPlayerActionHandler(playerName, playerId, gameTag, gameId)
         dispatch(insertPlayerAction(playerName, playerId, gameTag, true, gameId));
     }
 }
-
-//=====================================================================
-//    State management for players
-//---------------------------------------------------------------------
 
 export function insertPlayerAction(playerName, playerId, gameTag, currentTurn, gameId) {
     return {type: "insertPlayerAction", playerName, playerId, gameTag, currentTurn, gameId}
@@ -111,6 +111,25 @@ export function updateBoardActionHandler(index, gameTag, gameId, board) {
     }
 }
 
+export function insertWinnerActionHandler(gameId, gameTag, playerName) {
+    let winner = `${playerName} (${gameTag})`;
+    return () => {
+        const url = `http://localhost:3000/tictactoe/setWinner/${gameId}`;
+        const response = fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                winner: winner,
+            })
+        });
+        if (response.error) {
+            throw new Error(`HTTP POST request went wrong: got "${response.statusText}" for "${url}"`)
+        }
+    }
+}
+
 export function fetchBoardUpdate(gameId) {
     return async (dispatch) => {
         await fetch(`http://localhost:3000/tictactoe/fetchBoard/${gameId}`).then((response) => {
@@ -121,26 +140,7 @@ export function fetchBoardUpdate(gameId) {
     }
 }
 
-export function insertWinnerActionHandler(gameId, gameTag) {
-    return () => {
-        const url = `http://localhost:3000/tictactoe/setWinner/${gameId}`;
-        const response = fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                winner: gameTag,
-            })
-        });
-        if (response.error) {
-            throw new Error(`HTTP POST request went wrong: got "${response.statusText}" for "${url}"`)
-        }
-    }
-}
-
 export function fetchWinner(gameId) {
-    console.log('FETCHING WINNER');
     return async (dispatch) => {
         await fetch(`http://localhost:3000/tictactoe/fetchWinner/${gameId}`).then((response) => {
             return response.json();

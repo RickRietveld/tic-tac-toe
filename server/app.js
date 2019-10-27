@@ -1,3 +1,4 @@
+const pusher = require('./sockets/pusher.js');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -7,21 +8,24 @@ const mongoose = require('mongoose');
 const app = express();
 const http = require('http');
 const theHttpServer = http.createServer();
+let tictactoe = express.Router();
 const fs = require('fs');
-eval(fs.readFileSync('websockets.js') + '');
+eval(fs.readFileSync('./sockets/websockets.js') + '');
 
+app.set('json spaces', 3);
+app.use(cors());
+app.use(compression({threshold: 1}));
+app.use(bodyParser.text());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use("/tictactoe", tictactoe);
+app.use(express.static(path.join(__dirname, 'client-side')));
 
-let Pusher = require('pusher');
-
-let pusher = new Pusher({
-    appId: '886596',
-    key: '8787ac6d77c8d767b723',
-    secret: '955e111ab85f7f9e2d00',
-    cluster: 'eu',
-    encrypted: true
-});
-
-//---------- Mongoose -------------//
+//=====================================================================
+//    Mongoose
+//---------------------------------------------------------------------
 
 mongoose.connect('mongodb://localhost:27017/tictactoe', {useNewUrlParser: true});
 
@@ -32,17 +36,6 @@ db.on('error', () => {
 db.once('open', () => {
     console.log('connected to mongoose')
 });
-
-app.set('json spaces', 3);
-app.use(cors());
-app.use(compression({threshold: 1}));
-app.use(bodyParser.text());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
-app.use(express.static(path.join(__dirname, 'client-side')));
-
 
 const Schema = mongoose.Schema;
 
@@ -60,9 +53,6 @@ let gameSchema = new Schema({
 });
 
 let Game = mongoose.model('Game', gameSchema);
-
-let gameCollection = mongoose.connection.collection('games');
-let tictactoe = express.Router();
 
 tictactoe.post('/createGame', async function (req, res) {
     const createGame = new Game({
@@ -142,7 +132,7 @@ tictactoe.get('/fetchBoard/:gameId', async function (req, res) {
         'gameProgress', (function (err, data) {
             if (err) throw err;
             res.json(data);
-            pusher.trigger('game-' + gameId, 'board-updated', {});
+            pusher.pusher.trigger('game-' + gameId, 'board-updated', {});
         }));
 });
 
@@ -175,11 +165,8 @@ tictactoe.get('/gameChecker/:roomId', async function (req, res) {
     }));
 });
 
-
 theHttpServer.on('request', app);
 theHttpServer.listen(3000,
     function () {
         console.log("The Server is listening on port 3000.")
     });
-
-app.use("/tictactoe", tictactoe);

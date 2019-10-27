@@ -30,5 +30,5 @@ function sendMessageToPlayers(message) {
 
 function onClose(client) {
     console.log("Connection closed");
-    // console.log(client)
+    //console.log(client)
 }
