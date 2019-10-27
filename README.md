@@ -13,6 +13,5 @@ Tic Tac Toe Online Multiplayer made with React Redux and Express NodeJS to creat
 
 ### Future todo list:
 
-- Add turn based structure. 
-- Add match Id validation. 
-- Add max player per match validation. 
+- Add turn based structure (display names and toggle board features). 
+- Add security (match Id validation, max players per match validation, disconnection handling). 
