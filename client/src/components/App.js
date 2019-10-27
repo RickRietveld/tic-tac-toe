@@ -43,6 +43,7 @@ class App extends Component {
                     return history.push('/exit');
                 case 'ANNOUNCE_DRAW':
                     return history.push('/exit');
+                default:
             }
         };
 
