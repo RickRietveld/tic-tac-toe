@@ -71,7 +71,7 @@ class Game extends React.Component {
             const [a, b, c] = possibleCombinations[i];
             if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
                 await this.props.insertWinnerAction(this.props.players.gameId, squares[a], this.props.players.player.playerName);
-                setTimeout(this.onAnnounceWinnerHandler, 500);
+                setTimeout(this.onAnnounceWinnerHandler, 100);
                 return;
             }
         }
